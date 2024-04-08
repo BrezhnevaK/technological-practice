@@ -1,0 +1,50 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+// Функция, для которой ищем корни
+double equation(double x) {
+    return pow(x, 3) + 3 * x + 2.2;
+}
+
+// Функция для реализации метода секущих
+double secantMethod(double x0, double x1, double epsilon) {
+    double x2, f0, f1, f2, error;
+    int iteration = 1;
+
+    do {
+        f0 = equation(x0);
+        f1 = equation(x1);
+
+        x2 = x1 - (f1 * (x1 - x0)) / (f1 - f0);
+        f2 = equation(x2);
+
+        error = abs(x2 - x1);
+        x0 = x1;
+        x1 = x2;
+
+        cout << "Iteration " << iteration << ": x = " << x2 << ", f(x) = " << f2 << ", error = " << error << endl;
+
+        iteration++;
+    } while (error > epsilon);
+
+    return x2;
+}
+
+int main() {
+    double x0, x1, epsilon;
+
+    cout << "Введите x0: ";
+    cin >> x0;
+    cout << "Введите x1: ";
+    cin >> x1;
+    cout << "Введите epsilon: ";
+    cin >> epsilon;
+
+    double root = secantMethod(x0, x1, epsilon);
+
+    cout << "Approximate root: " << root << endl;
+
+    return 0;
+}
