@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 // Заданная функция y' = f(x, y)
 double f(double x, double y) {
@@ -7,9 +8,11 @@ double f(double x, double y) {
 }
 
 // Метод Рунге-Кутты четвертого порядка для численного решения задачи Коши
-void rungeKutta(double x0, double y0, double h, double xn) {
+void rungeKutta(double x0, double y0, double h, double xn, std::ofstream& file) {
     double x = x0;
     double y = y0;
+
+    file << x << " " << y << std::endl;
 
     while (x < xn) {
         double k1 = h * f(x, y);
@@ -19,6 +22,8 @@ void rungeKutta(double x0, double y0, double h, double xn) {
 
         y = y + (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
         x = x + h;
+
+        file << x << " " << y << std::endl;
     }
 
     std::cout << "Approximate solution: y(" << xn << ") = " << y << std::endl;
@@ -37,7 +42,8 @@ int main() {
     std::cout << "Enter the initial condition x0 and y0: ";
     std::cin >> initialX >> initialY;
 
-    rungeKutta(initialX, initialY, dx, b);
+    std::ofstream file("p3.dat");
+    rungeKutta(initialX, initialY, dx, b, file);
 
     return 0;
 }
