@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 
@@ -6,7 +7,7 @@
 double nearestneighborinterpolation(std::vector<double>& x, std::vector<double>& y, double xvalue) {
     int index = 0;
     double mindistance = std::abs(xvalue - x[0]);
-    
+
     // находим индекс ближайшего значения
     for (int i = 1; i < x.size(); i++) {
         double distance = std::abs(xvalue - x[i]);
@@ -15,7 +16,7 @@ double nearestneighborinterpolation(std::vector<double>& x, std::vector<double>&
             mindistance = distance;
         }
     }
-    
+
     // возвращаем соответствующее значение y
     return y[index];
 }
@@ -23,19 +24,19 @@ double nearestneighborinterpolation(std::vector<double>& x, std::vector<double>&
 // функция для нахождения канонического полинома
 double canonicalpolynomialinterpolation(std::vector<double>& x, std::vector<double>& y, double xvalue) {
     double result = 0.0;
-    
+
     for (int i = 0; i < x.size(); i++) {
         double term = y[i];
-        
+
         for (int j = 0; j < x.size(); j++) {
             if (i != j) {
                 term *= (xvalue - x[j]) / (x[i] - x[j]);
             }
         }
-        
+
         result += term;
     }
-    
+
     return result;
 }
 
@@ -43,26 +44,30 @@ int main() {
     // известные значения
     std::vector<double> x = {1, 2, 3, 4, 5};
     std::vector<double> y = {3.9, 4.9, 3.4, 1.4, 1.9};
-    
+
+    std::ofstream outfile("p4.txt"); // открываем файл для записи
+
     // значения x, для которых нужно найти y
     double minx = *std::min_element(x.begin(), x.end());
     double maxx = *std::max_element(x.begin(), x.end());
     int n = x.size();
     double deltax = std::abs(maxx - minx) / (10 * (n - 1));
-    
+
     // интерполяция ближайшего соседа
-    std::cout << "nearest neighbor interpolation:" << std::endl;
+    outfile << ""<< std::endl;
     for (double currentvalue = minx; currentvalue <= maxx; currentvalue += deltax) {
         double interpolatedvalue = nearestneighborinterpolation(x, y, currentvalue);
-        std::cout << "x = " << currentvalue << ", y = " << interpolatedvalue << std::endl;
+        outfile << currentvalue << " " << interpolatedvalue << std::endl;
     }
-    
+
     // интерполяция канонического полинома
-    std::cout << "\ncanonical polynomial interpolation:" << std::endl;
+    outfile << ""<<std::endl;
     for (double currentvalue = minx; currentvalue <= maxx; currentvalue += deltax) {
         double interpolatedvalue = canonicalpolynomialinterpolation(x, y, currentvalue);
-        std::cout << "x = " << currentvalue << ", y = " << interpolatedvalue << std::endl;
+        outfile << currentvalue << " " << interpolatedvalue << std::endl;
     }
-    
+
+    outfile.close(); // закрываем файл
+
     return 0;
 }
