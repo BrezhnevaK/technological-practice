@@ -1,13 +1,13 @@
 #include <iostream>
 #include <cmath>
 
-// Функция, для которой вычисляем интеграл
+// функция, для которой вычисляем интеграл
 double f(double x) {
     return std::cos(x) * std::cos(x);
 }
 
-// Метод левых прямоугольников
-double leftRectangleMethod(double a, double b, int n) {
+// метод левых прямоугольников
+double leftrectanglemethod(double a, double b, int n) {
     double h = (b - a) / n;
     double sum = 0.0;
     for (int i = 0; i < n; i++) {
@@ -17,8 +17,8 @@ double leftRectangleMethod(double a, double b, int n) {
     return h * sum;
 }
 
-// Метод Ньютона-Симпсона (квадратура)
-double simpsonMethod(double a, double b, int n) {
+// метод ньютона-симпсона (квадратура)
+double simpsonmethod(double a, double b, int n) {
     double h = (b - a) / n;
     double sum = f(a) + f(b);
     for (int i = 1; i < n; i += 2) {
@@ -33,22 +33,20 @@ double simpsonMethod(double a, double b, int n) {
 }
 
 int main() {
-    double a, b, x;
-    std::cout << "Введите значения a и b (интервал интегрирования): ";
+    double a, b;
+    std::cout << "введите значения a и b (интервал интегрирования): ";
     std::cin >> a >> b;
-    std::cout << "Введите значение x: ";
-    std::cin >> x;
 
-    // Вычисление интеграла методом левых прямоугольников
+    // вычисление интеграла методом левых прямоугольников
     int n = 1000; // количество разбиений
-    double leftRectangleResult = leftRectangleMethod(a, b, n);
+    double leftrectangleresult = leftrectanglemethod(a, b, n);
 
-    // Вычисление интеграла методом Ньютона-Симпсона
+    // вычисление интеграла методом ньютона-симпсона
     int m = 100; // количество разбиений
-    double simpsonResult = simpsonMethod(a, b, m);
+    double simpsonresult = simpsonmethod(a, b, m);
 
-    std::cout << "Приближенное значение интеграла (метод левых прямоугольников): " << leftRectangleResult << std::endl;
-    std::cout << "Приближенное значение интеграла (метод Ньютона-Симпсона): " << simpsonResult << std::endl;
+    std::cout << "приближенное значение интеграла (метод левых прямоугольников): " << leftrectangleresult << std::endl;
+    std::cout << "приближенное значение интеграла (метод ньютона-симпсона): " << simpsonresult << std::endl;
 
     return 0;
 }
