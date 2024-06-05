@@ -1,49 +1,74 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 #include <fstream>
 
-// Заданная функция y' = f(x, y)
-double f(double x, double y) {
-    return pow(y, 2) + x;
+// Функция для вычисления y' = f(x, y)
+double func(double x, double y) {
+    return y * y + x;
 }
 
-// Метод Рунге-Кутты четвертого порядка для численного решения задачи Коши
-void rungeKutta(double x0, double y0, double h, double xn, std::ofstream& file) {
-    double x = x0;
-    double y = y0;
+// Класс для реализации метода Рунге-Кутты
+class RungeKuttaSolver {
+public:
+    RungeKuttaSolver(double (*function)(double, double)) : f(function) {}
 
-    file << x << " " << y << std::endl;
+    // Выполнение метода Рунге-Кутты
+    void solve(double x0, double y0, double h, double xEnd, const std::string& filename) {
+        std::vector<double> xValues, yValues;
+        xValues.push_back(x0);
+        yValues.push_back(y0);
 
-    while (x < xn) {
-        double k1 = h * f(x, y);
-        double k2 = h * f(x + 0.5 * h, y + 0.5 * k1);
-        double k3 = h * f(x + 0.5 * h, y + 0.5 * k2);
-        double k4 = h * f(x + h, y + k3);
+        double x = x0, y = y0;
+        while (x < xEnd) {
+            double k1 = h * f(x, y);
+            double k2 = h * f(x + 0.5 * h, y + 0.5 * k1);
+            double k3 = h * f(x + 0.5 * h, y + 0.5 * k2);
+            double k4 = h * f(x + h, y + k3);
 
-        y = y + (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
-        x = x + h;
+            y += (k1 + 2 * k2 + 2 * k3 + k4) / 6.0;
+            x += h;
 
-        file << x << " " << y << std::endl;
+            xValues.push_back(x);
+            yValues.push_back(y);
+        }
+
+        // Вывод результата в файл
+        outputToFile(xValues, yValues, filename);
     }
 
-    std::cout << "Approximate solution: y(" << xn << ") = " << y << std::endl;
-}
+private:
+    double (*f)(double, double); // Указатель на функцию
+
+    // Вывод значений в файл
+    void outputToFile(const std::vector<double>& xValues, const std::vector<double>& yValues, const std::string& filename) {
+        std::ofstream file(filename);
+        if (file.is_open()) {
+            for (size_t i = 0; i < xValues.size(); ++i) {
+                file << xValues[i] << " " << yValues[i] << std::endl;
+            }
+            file.close();
+        } else {
+            std::cerr << "Unable to open file: " << filename << std::endl;
+        }
+    }
+};
 
 int main() {
-    double a, b, dx;
-    double initialX, initialY;
+    double a, b, h;
+    double x0, y0;
 
-    std::cout << "Enter the interval [a, b]: ";
+    std::cout << "Введите интервал [a, b]: ";
     std::cin >> a >> b;
 
-    std::cout << "Enter the step size ?x: ";
-    std::cin >> dx;
+    std::cout << "Введите размер шага h: ";
+    std::cin >> h;
 
-    std::cout << "Enter the initial condition x0 and y0: ";
-    std::cin >> initialX >> initialY;
+    std::cout << "Введите начальные условия x0 и y0: ";
+    std::cin >> x0 >> y0;
 
-    std::ofstream file("p3.dat");
-    rungeKutta(initialX, initialY, dx, b, file);
+    RungeKuttaSolver solver(func);
+    solver.solve(x0, y0, h, b, "p3.dat");
 
     return 0;
 }
