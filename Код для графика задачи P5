@@ -1,0 +1,28 @@
+#include <iostream>
+#include <iomanip>
+
+// Функция F1
+double F1(double x) {
+    const double a0 = 5.02;
+    const double a1 = -2.26;
+    return a1 * x + a0;
+}
+
+// Функция F2
+double F2(double x) {
+    const double a0 = 4.21;
+    const double a1 = -0.53;
+    const double a2 = -0.52;
+    return a2 * x * x + a1 * x + a0;
+}
+
+int main() {
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "x\tF1(x)\t\tF2(x)" << std::endl;
+
+    for (double x = 0; x <= 10; x += 1) {
+        std::cout << x << "\t" << F1(x) << "\t\t" << F2(x) << std::endl;
+    }
+
+    return 0;
+}
