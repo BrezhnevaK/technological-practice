@@ -1,63 +1,69 @@
 #include <iostream>
 #include <cmath>
+#include <iomanip>
 
+// Функция f(x) = cos^2(x)
 double f(double x) {
-    return sin(x)*sin(x); // функция f(cos^2(x))
+    return std::pow(std::cos(x), 2);
 }
 
+// Метод левых прямоугольников
 double leftRectangles(double a, double b, int n) {
     double h = (b - a) / n;
     double sum = 0.0;
     for (int i = 0; i < n; i++) {
-        sum += f(a + i*h);
+        sum += f(a + i * h);
     }
     return h * sum;
 }
 
+// Правило Симпсона
 double simpson(double a, double b, int n) {
     double h = (b - a) / n;
     double sum = f(a) + f(b);
     for (int i = 1; i < n; i += 2) {
-        sum += 4*f(a + i*h);
+        sum += 4 * f(a + i * h);
     }
-    for (int i = 2; i < n-1; i += 2) {
-        sum += 2*f(a + i*h);
+    for (int i = 2; i < n - 1; i += 2) {
+        sum += 2 * f(a + i * h);
     }
-    return h/3 * sum;
+    return h / 3 * sum;
 }
 
 int main() {
     double a, b;
+    int n = 10; // начальное количество разбиений
+    double error_threshold = 0.01; // желаемая точность
+
     std::cout << "Введите нижний предел интеграции: ";
     std::cin >> a;
     std::cout << "Введите верхний предел интеграции: ";
     std::cin >> b;
 
-    int n = 10; //начальное количество разбиений
+    double integral_left, integral_simpson, error_left, error_simpson;
 
-    double integral_left = leftRectangles(a, b, n);
-    double integral_simpson = simpson(a, b, n);
-
-    double error_left, error_simpson;
+    // Метод левых прямоугольников
     do {
-        double integral_left_new = leftRectangles(a, b, 2*n);
+        integral_left = leftRectangles(a, b, n);
+        double integral_left_new = leftRectangles(a, b, 2 * n);
         error_left = std::abs((integral_left_new - integral_left) / integral_left_new) * 100;
         integral_left = integral_left_new;
         n *= 2;
-    } while (error_left > 1);
+    } while (error_left > error_threshold);
 
-    n = 10;
-
+    // Правило Симпсона
+    n = 10; // сброс количества разбиений
     do {
-        double integral_simpson_new = simpson(a, b, 2*n);
+        integral_simpson = simpson(a, b, n);
+        double integral_simpson_new = simpson(a, b, 2 * n);
         error_simpson = std::abs((integral_simpson_new - integral_simpson) / integral_simpson_new) * 100;
         integral_simpson = integral_simpson_new;
         n *= 2;
-    } while (error_simpson > 1);
+    } while (error_simpson > error_threshold);
 
+    std::cout << std::fixed << std::setprecision(4);
     std::cout << "Интеграл с использованием метода левых прямоугольников: " << integral_left << std::endl;
     std::cout << "Интеграл по правилу Симпсона: " << integral_simpson << std::endl;
-
 
     return 0;
 }
